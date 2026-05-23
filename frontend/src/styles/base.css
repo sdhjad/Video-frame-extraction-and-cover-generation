@@ -1,0 +1,24 @@
+:root {
+  color-scheme: light;
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface2: #f7f7f7;
+  --line: #e5e5e5;
+  --dash: #cbd5e1;
+  --text: #111111;
+  --muted: #666666;
+  --soft: #9ca3af;
+  --accent: #111111;
+  --accent2: #2563eb;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-width: 360px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, "Microsoft YaHei", system-ui, sans-serif;
+}
+button, input, select {
+  font: inherit;
+}

@@ -1,0 +1,34 @@
+appId: com.videoframe.tool
+productName: 视频抽帧
+copyright: Copyright © 2026
+
+directories:
+  output: dist
+
+win:
+  icon: assets/app.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: assets/app.ico
+  uninstallerIcon: assets/app.ico
+
+files:
+  - main.cjs
+  - package.json
+  - node_modules/**/*
+
+extraResources:
+  - from: ../frontend/dist
+    to: frontend
+  - from: ../backend/bin/server.exe
+    to: backend/server.exe
+  - from: ../backend/.env
+    to: backend/.env
+  - from: external/ffmpeg
+    to: ffmpeg

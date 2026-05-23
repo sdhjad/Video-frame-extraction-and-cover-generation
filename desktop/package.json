@@ -1,0 +1,17 @@
+{
+  "name": "video-frame-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "dev": "electron .",
+    "build:frontend": "npm --prefix ../frontend run build",
+    "build:backend": "cd ../backend && go build -o bin/server.exe ./cmd/server",
+    "start": "electron .",
+    "pack": "npm run build:backend && npm run build:frontend && electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "^26.8.1"
+  }
+}

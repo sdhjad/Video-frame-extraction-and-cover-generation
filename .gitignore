@@ -1,0 +1,16 @@
+frontend/node_modules/
+frontend/dist/
+storage/jobs/*
+!storage/jobs/.gitkeep
+backend/*.exe
+backend/bin/
+backend/tmp/
+backend/.env
+backend/storage/
+desktop/dist/
+desktop/external/
+desktop/node_modules/
+desktop/package-lock.json
+promo-video/
+*.log
+.claude/

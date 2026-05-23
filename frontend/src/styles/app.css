@@ -1,0 +1,54 @@
+main { width: min(980px, calc(100% - 40px)); margin: 0 auto; padding: 64px 0; }
+.hero { display: grid; justify-items: center; text-align: center; margin-bottom: 28px; }
+.appIcon { width: 84px; height: 84px; object-fit: contain; }
+h1, h2, p { margin: 0; }
+h1 { margin-top: 18px; font-size: 34px; line-height: 1.1; letter-spacing: 0; }
+p { margin-top: 16px; color: var(--muted); font-size: 16px; line-height: 1.7; }
+.uploadCard {
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+  padding: 28px; box-shadow: 0 10px 40px rgba(0,0,0,.04);
+}
+.upload { display: grid; gap: 24px; }
+.panelTitle h2 { font-size: 24px; line-height: 1.2; }
+.panelTitle p { margin-top: 6px; font-size: 14px; }
+.fileDrop {
+  min-height: 245px; border: 2px dashed var(--dash); border-radius: 8px;
+  display: grid; place-items: center; align-content: center; gap: 12px;
+  color: var(--muted); cursor: pointer;
+}
+.fileDrop input { display: none; }
+.uploadIcon { width: 58px; height: 58px; object-fit: contain; }
+.fileDrop strong, .primary {
+  border-radius: 8px; background: var(--accent); color: #fff;
+  padding: 12px 18px; font-size: 14px; font-weight: 700;
+}
+.fileDrop em { font-style: normal; font-size: 14px; }
+.optionRow { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.field { display: grid; gap: 7px; color: var(--muted); font-size: 13px; }
+input, select, button {
+  height: 42px; border: 1px solid var(--line); border-radius: 8px;
+  background: #fff; color: var(--text); padding: 0 13px;
+}
+button { cursor: pointer; transition: background .15s, border-color .15s; }
+button:hover { border-color: #bdbdbd; background: var(--surface2); }
+.progress { margin-top: 22px; display: grid; gap: 12px; color: var(--muted); }
+.progress > div, .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+progress { width: 100%; height: 8px; accent-color: var(--accent2); }
+.indeterminate {
+  appearance: none; overflow: hidden; border: 0; border-radius: 999px; background: #eee;
+}
+.indeterminate::-webkit-progress-bar { background: #eee; }
+.indeterminate::-webkit-progress-value {
+  width: 35%; background: var(--accent2); animation: loadingBar 1.1s infinite ease-in-out;
+}
+@keyframes loadingBar {
+  0% { margin-left: -35%; }
+  100% { margin-left: 100%; }
+}
+.toolbar {
+  position: sticky; top: 0; z-index: 2; margin-top: 24px; padding: 12px;
+  border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.92);
+  backdrop-filter: blur(10px);
+}
+.selection { font-weight: 700; min-width: 112px; }
+.toolbar small { margin-left: auto; color: var(--muted); font-size: 12px; }

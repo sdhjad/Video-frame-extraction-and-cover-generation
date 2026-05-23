@@ -1,0 +1,87 @@
+.preview {
+  position: fixed; inset: 0; z-index: 20; display: grid; place-items: center;
+  width: 100vw; height: 100dvh; padding: 24px 72px; overflow: hidden;
+  background: rgba(15, 15, 13, .76); backdrop-filter: blur(18px);
+}
+.previewShell {
+  display: grid;
+  grid-template-columns: clamp(180px, 14vw, 220px) minmax(0, 1fr) clamp(280px, 22vw, 340px);
+  gap: 16px; width: min(1360px, 100%); height: min(720px, calc(100dvh - 48px));
+  align-items: stretch;
+}
+.previewPanel, .aiPanel, .coverHistory {
+  border: 1px solid rgba(255,255,255,.18); border-radius: 8px;
+  background: rgba(18,18,16,.96); box-shadow: 0 24px 80px rgba(0,0,0,.34); overflow: hidden;
+}
+.previewPanel {
+  position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto;
+  align-self: stretch; min-width: 0; max-height: 100%;
+}
+.previewPanel img {
+  display: block; width: 100%; height: 100%; min-height: 0; max-height: none;
+  object-fit: contain; background: #080806;
+}
+.previewPanel p {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0;
+  padding: 12px 16px; color: #f2eee5; font: 13px ui-sans-serif, sans-serif;
+  border-top: 1px solid rgba(255,255,255,.08); overflow: hidden; white-space: nowrap;
+}
+.previewPanel p > :first-child { overflow: hidden; text-overflow: ellipsis; }
+.previewPanel span { flex: none; color: rgba(242,238,229,.64); }
+.previewClose {
+  position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; padding: 0;
+  border: 1px solid rgba(255,255,255,.2); border-radius: 999px;
+  background: rgba(255,255,255,.92); color: #111; font-size: 26px; line-height: 30px;
+}
+.previewNav {
+  position: absolute; top: 50%; z-index: 2; width: 40px; height: 40px; padding: 0;
+  transform: translateY(-50%); border: 1.5px solid rgba(255,255,255,.32);
+  border-radius: 50%; background: rgba(0,0,0,.54); color: #fff; font-size: 24px;
+  line-height: 1; cursor: pointer; display: grid; place-items: center;
+  transition: none; opacity: 0;
+}
+.previewNav:hover { transform: translateY(-50%); }
+.previewNav.left { left: 12px; }
+.previewNav.right { right: 12px; }
+.previewPanel:hover .previewNav { opacity: 1; }
+.coverHistory, .aiPanel {
+  height: 100%; max-height: 100%; overflow: auto; align-self: stretch;
+}
+.coverHistory {
+  padding: 14px; color: #f5f1e8; display: grid; gap: 10px;
+  grid-auto-rows: max-content; align-content: start;
+}
+.coverHistory h2, .aiPanel h2 { margin: 0; font-size: 16px; font-weight: 650; }
+.coverHistory p, .aiPanel p { margin: 0; color: rgba(245,241,232,.64); font-size: 13px; line-height: 1.6; }
+.coverHistory button {
+  height: auto; padding: 0; overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 8px;
+  background: #080806; color: #f5f1e8; text-align: left;
+}
+.coverHistory button.active { border-color: #f5f1e8; box-shadow: 0 0 0 2px rgba(245,241,232,.14); }
+.coverHistory img { width: 100%; aspect-ratio: 4 / 3; display: block; object-fit: cover; background: #080806; }
+.coverHistory span { display: block; padding: 8px; font-size: 12px; }
+.coverItem { display: grid; gap: 6px; }
+.saveCover {
+  width: 100%; height: 32px !important; padding: 0 10px !important;
+  text-align: center !important; font-size: 12px;
+}
+.aiPanel { padding: 18px; color: #f5f1e8; display: grid; align-content: start; gap: 12px; }
+.aiPanel h2 { font-size: 20px; }
+.aiPanel textarea {
+  width: 100%; min-height: 128px; resize: vertical; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.14); background: #080806; color: #fff;
+  padding: 12px; font: 14px ui-sans-serif, sans-serif;
+}
+.ratioPicker { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ratioPicker button { background: #080806; color: #f5f1e8; border-color: rgba(255,255,255,.14); }
+.ratioPicker button.active { background: #fff; color: #111; }
+.refUploadBox { display: grid; gap: 8px; }
+.refDrop {
+  min-height: 92px; border: 1px dashed #5f6875; border-radius: 8px; display: grid;
+  place-items: center; padding: 10px; cursor: pointer; color: rgba(245,241,232,.72);
+  background: #080806; font-size: 13px; text-align: center;
+}
+.refDrop input { display: none; }
+.refDrop img { width: 100%; max-height: 148px; object-fit: contain; border-radius: 6px; }
+.refDrop.hasPreview { border-style: solid; padding: 6px; }
+.clearRef { height: 32px; background: #080806; color: #f5f1e8; border-color: rgba(255,255,255,.14); font-size: 12px; }
