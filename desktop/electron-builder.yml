@@ -19,8 +19,12 @@ nsis:
   uninstallerIcon: assets/app.ico
 
 files:
-  - main.cjs
+  - main.js
   - package.json
+  - "*.js"
+  - "*.html"
+  - "*.svg"
+  - assets/**/*
   - node_modules/**/*
 
 extraResources:

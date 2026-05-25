@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: transparent; overflow: hidden; font-family: 'Microsoft YaHei',sans-serif; -webkit-app-region: no-drag; user-select: none; }
+
+  .dog { width: 200px; height: 210px; padding: 8px; display: flex; flex-direction: column; align-items: center; }
+
+  /* 外层：上下浮动 */
+  .bob-wrap { animation: bob 3s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-4px);} }
+
+  /* 内层：身体摇摆 */
+  .img-wrap {
+    width: 170px; height: 170px; display: flex; align-items: center; justify-content: center;
+    position: relative;
+    animation: sway 0.55s ease-in-out infinite; transform-origin: 50% 100%;
+    transition: filter 0.4s;
+  }
+  @keyframes sway { 0%,100%{transform:rotate(-2.5deg);} 50%{transform:rotate(3deg);} }
+
+  .img-wrap img { width: 160px; height: 160px; object-fit: contain; image-rendering: pixelated; position: absolute; top: 0; left: 0; -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  #wc-open { display: none; }
+
+  /* 饥饿 → 张嘴 + 放大，停摇摆 */
+  .dog.hungry #wc-closed, .dog.eating #wc-closed { display: none; }
+  .dog.hungry #wc-open,   .dog.eating #wc-open   { display: block; }
+  .dog.hungry .bob-wrap { animation: none; }
+  .dog.hungry .img-wrap { animation: none; transform: scale(1.1); }
+
+  /* 进食 → 张嘴 + 咀嚼 */
+  .dog.eating .bob-wrap { animation: none; }
+  .dog.eating .img-wrap { animation: chew 0.18s ease-in-out infinite; transform-origin: center; }
+  @keyframes chew { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+
+  /* 开心 → 弹跳 */
+  .dog.happy .bob-wrap { animation: bounce 0.5s ease-out; }
+  .dog.happy .img-wrap { animation: none; }
+  @keyframes bounce { 0%{transform:translateY(0);} 40%{transform:translateY(-18px);} 100%{transform:translateY(0);} }
+
+  /* 难过 → 摇头 + 掉色 */
+  .dog.sad .bob-wrap { animation: shake 0.5s ease-out; }
+  .dog.sad .img-wrap { animation: none; filter: saturate(0.1) brightness(0.7); }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 50%{transform:translateX(6px);} 75%{transform:translateX(-3px);} }
+
+  .hint { margin-top: 0; padding: 3px 12px; border-radius: 10px; background: rgba(0,0,0,0.5); color: #fff; font-size: 11px; backdrop-filter: blur(4px); }
+</style>
+</head>
+<body>
+<div id="dog" class="dog">
+  <div class="bob-wrap">
+    <div class="img-wrap">
+      <img id="wc-closed" src="wc-closed.svg" alt="旺财" draggable="false" />
+      <img id="wc-open"   src="wc-open.svg" alt="旺财张嘴" draggable="false" />
+    </div>
+  </div>
+  <div class="hint">拖拽 MP4 喂我</div>
+</div>
+<script>
+  var d = document.getElementById('dog');
+  var dragCount = 0;
+  var hint = d.querySelector('.hint');
+
+  // 空闲时随机滚动的话术，催促用户投喂 MP4
+  var msgs = [
+    '拖拽 MP4 喂我',
+    '好饿…有视频吗',
+    '汪! 扔个 MP4 进来',
+    '我闻到视频的味道了',
+    '快给我吃个 MP4',
+    '今天还没吃东西呢',
+    '拖个视频试试看',
+    'Zzz…有 MP4 吗…',
+    '喂我! 汪~',
+    '我能帮你抽帧哦',
+    '什么视频都可以',
+    '等得好无聊…汪',
+  ];
+  var msgIdx = 0;
+  var idleTimer = null;
+
+  function startIdleChat() {
+    stopIdleChat();
+    idleTimer = setInterval(function() {
+      if (d.className === 'dog') {
+        msgIdx = (msgIdx + 1) % msgs.length;
+        hint.textContent = msgs[msgIdx];
+      }
+    }, 3500);
+  }
+  function stopIdleChat() {
+    if (idleTimer) { clearInterval(idleTimer); idleTimer = null; }
+  }
+
+  startIdleChat();
+
+  var dragging = false; // 拖拽期间屏蔽 click，防止 drop 后误触发
+
+  // 阻止图片本身被拖拽
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+  });
+
+  document.addEventListener('dragenter', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    dragging = true;
+    dragCount++;
+    if (dragCount === 1) { stopIdleChat(); d.className = 'dog hungry'; }
+  });
+  document.addEventListener('dragover', function(e) {
+    e.preventDefault(); e.stopPropagation();
+  });
+  document.addEventListener('dragleave', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    dragCount--;
+    if (dragCount <= 0) { dragCount = 0; dragging = false; d.className = 'dog'; startIdleChat(); }
+  });
+  document.addEventListener('drop', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    dragCount = 0; dragging = true; // 保持 dragging=true 防止紧随的 click 误触
+    setTimeout(function() { dragging = false; }, 400);
+    d.className = 'dog';
+    var mp4 = Array.from(e.dataTransfer.files||[]).filter(function(f){return f.name.toLowerCase().endsWith('.mp4');});
+    if (!mp4.length) { flash('sad','汪汪…不吃这个'); return; }
+    eatAll(mp4);
+  });
+
+  // 点击狗狗 → 回到主界面（拖拽 / 刚放下时忽略）
+  document.addEventListener('click', function() {
+    if (dragging) return;
+    window.dropZoneAPI.showMainWindow();
+  });
+
+  async function eatAll(files) {
+    for (var i = 0; i < files.length; i++) {
+      stopIdleChat();
+      d.className = 'dog eating';
+      hint.textContent = '啊呜…'+files[i].name.slice(0,6)+'…';
+      try {
+        console.log('上传文件:', files[i].name);
+        await window.dropZoneAPI.uploadVideo(files[i]);
+        flash('happy','汪汪! 好吃~');
+      } catch(e) {
+        console.error('上传失败:', e.message || e);
+        flash('sad', e.message ? e.message.slice(0,12) : '呜…吃坏了');
+      }
+      await sleep(2000);
+    }
+  }
+
+  function flash(state,text) {
+    stopIdleChat();
+    d.className = 'dog '+state;
+    hint.textContent = text;
+    setTimeout(function(){
+      d.className='dog';
+      hint.textContent = msgs[0];
+      startIdleChat();
+    }, 2800);
+  }
+  function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+</script>
+</body>
+</html>

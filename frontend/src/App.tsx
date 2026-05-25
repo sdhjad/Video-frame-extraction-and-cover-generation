@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { generateCovers, type CoverInput } from './api/covers';
 import { downloadFrames } from './api/download';
 import { getFrames } from './api/frames';
@@ -19,6 +19,8 @@ import videoIcon from './assets/video-icon.png';
 import './styles/base.css'; import './styles/app.css'; import './styles/frames.css';
 import './styles/preview.css'; import './styles/motion.css'; import './styles/responsive.css';
 
+declare global { interface Window { electronAPI?: { showWindow: () => void } } }
+
 export default function App() {
   const [initialJob, setInitialJob] = useState<Job | null>(null);
   const [frames, setFrames] = useState<Frame[]>([]);
@@ -30,6 +32,33 @@ export default function App() {
   const [options, setOptions] = useState<ExtractOptions>({ fps: 1, format: 'jpg' });
   const job = useJobPolling(initialJob);
   const selection = useFrameSelection(frames);
+  const isPendingJob = useRef(false);
+
+  // 加载拖拽上传的 job（页面首次加载 或 Electron 主进程触发自定义事件时）
+  const loadPendingJob = useCallback(() => {
+    const id = sessionStorage.getItem('pendingJobId');
+    if (!id) return;
+    sessionStorage.removeItem('pendingJobId');
+    isPendingJob.current = true;
+    setUploading(true);
+    fetch(`http://localhost:8080/api/jobs/${id}`)
+      .then((r) => r.json())
+      .then((j: Job) => setInitialJob(j))
+      .finally(() => setUploading(false));
+  }, []);
+  useEffect(() => {
+    loadPendingJob();
+    window.addEventListener('pendingJobAvailable', loadPendingJob);
+    return () => window.removeEventListener('pendingJobAvailable', loadPendingJob);
+  }, [loadPendingJob]);
+
+  // 拖拽上传的 job 抽帧完成后 → 自动弹出主界面
+  useEffect(() => {
+    if (job?.status === 'done' && isPendingJob.current) {
+      isPendingJob.current = false;
+      window.electronAPI?.showWindow();
+    }
+  }, [job]);
 
   async function upload(file: File) {
     clearPage(); setUploading(true);
@@ -48,6 +77,7 @@ export default function App() {
       const nextCovers = (await generateCovers(job.id, payload)).filter((item) => item.url);
       if (!nextCovers.length) throw new Error('生成结果没有图片地址');
       setCovers((old) => [...nextCovers, ...old]);
+      window.electronAPI?.showWindow();
     }
     catch (err) { setCoverError(err instanceof Error ? err.message : '生成失败'); }
     finally { setCoverBusy(false); }
